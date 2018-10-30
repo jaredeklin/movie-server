@@ -19,7 +19,7 @@ exports.up = function(knex, Promise) {
       table.string('poster_path');
       table.string('release_date');
       table.string('vote_average');
-      table.string('overview');
+      table.string('overview', 2000);
 
       table.timestamps(true, true);
     })
