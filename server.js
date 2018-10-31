@@ -54,6 +54,22 @@ app.get('/api/v1/users/:user', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+app.post('/api/v1/favorites', (request, response) => {
+  const favorite = request.body;
+  const keys = ['user_id', 'movie_id', 'title', 'poster_path', 'release_date', 'vote_average', 'overview'];
+
+  for (let requiredParameter of keys) {
+    if (favorite[requiredParameter] === undefined) {
+      return response.status(422)
+        .json(`You are missing a ${requiredParameter} property`);
+    }
+  }
+
+  database('favorites').insert(favorite, [...keys, 'id'])
+    .then(favorite => response.status(201).json(favorite[0]))
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on port ${app.get('port')}`); // eslint-disable-line
 });
