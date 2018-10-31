@@ -84,6 +84,19 @@ app.post('/api/v1/favorites', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+app.delete('/api/v1/favorites/:removeInfo', (request, response) => {
+  const { user_id, movie_id } = JSON.parse(request.params.removeInfo);
+
+  database('favorites').where({ user_id, movie_id }).del()
+    .then(favorite => {
+      if (favorite) {
+        response.status(200).json(`Deleted favorite movie id: ${movie_id}`);
+      } else {
+        response.status(404).json('Delete failed, favorite id not found');
+      }
+    });
+});
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on port ${app.get('port')}`); // eslint-disable-line
 });
