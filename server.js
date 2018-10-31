@@ -34,7 +34,8 @@ app.post('/api/v1/users', (request, response) => {
   database('users').insert(user, [...keys, 'id'])
     .then(user => response.status(201).json({ 
       message: 'New user created', 
-      id: user[0].id
+      id: user[0].id,
+      name: user[0].name
     }))
     .catch(error => response.status(500).json({ error }));
 })
