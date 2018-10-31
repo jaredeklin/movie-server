@@ -21,7 +21,7 @@ app.locals.title = 'Movie Server';
 
 
 app.post('/api/v1/users', (request, response) => {
-  const user = request.body
+  const user = request.body;
   const keys = ['name', 'email', 'password'];
 
   for (let requiredParameter of keys) {
@@ -31,6 +31,7 @@ app.post('/api/v1/users', (request, response) => {
     }
   }
 
+
   database('users').insert(user, [...keys, 'id'])
     .then(user => response.status(201).json({ 
       message: 'New user created', 
@@ -38,20 +39,28 @@ app.post('/api/v1/users', (request, response) => {
       name: user[0].name
     }))
     .catch(error => response.status(500).json({ error }));
-})
+});
 
 app.get('/api/v1/users/:user', (request, response) => {
   const { email, password } = JSON.parse(request.params.user);
-
+  
   database('users').where({ email, password }).select()
     .then(user => {
       if (user.length) {
         const { id, name } = user[0];
         response.status(200).json({ id, name, message: 'retrieved one user' });
       } else {
-        response.status(404).json('No messages found');
+        response.status(404).json('No user found');
       }
     })
+    .catch(error => response.status(500).json({ error }));
+});
+
+app.get('/api/v1/users/check/:email', (request, response) => {
+  const { email } = request.params;
+  
+  database('users').where({ email }).select()
+    .then(user => user.length ? response.json(false) : response.json(true))
     .catch(error => response.status(500).json({ error }));
 });
 
