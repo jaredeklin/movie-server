@@ -39,6 +39,21 @@ app.post('/api/v1/users', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 })
 
+app.get('/api/v1/users/:user', (request, response) => {
+  const { email, password } = JSON.parse(request.params.user);
+
+  database('users').where({ email, password }).select()
+    .then(user => {
+      if (user.length) {
+        const { id, name } = user[0];
+        response.status(200).json({ id, name, message: 'retrieved one user' });
+      } else {
+        response.status(404).json('No messages found');
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on port ${app.get('port')}`); // eslint-disable-line
 });
