@@ -54,6 +54,20 @@ app.get('/api/v1/users/:user', (request, response) => {
     .catch(error => response.status(500).json({ error }));
 });
 
+app.get('/api/v1/users/:id/favorites', (request, response) => {
+  const { id } = request.params;
+
+  database('favorites').where({ user_id: id }).select()
+    .then(fav => {
+      if (fav.length) {
+        response.status(200).json(fav);
+      } else {
+        response.status(404).json('No favorites found');
+      }
+    })
+    .catch(error => response.status(500).json({ error }));
+});
+
 app.post('/api/v1/favorites', (request, response) => {
   const favorite = request.body;
   const keys = ['user_id', 'movie_id', 'title', 'poster_path', 'release_date', 'vote_average', 'overview'];
